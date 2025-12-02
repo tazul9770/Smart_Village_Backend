@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'drf_yasg',
     "debug_toolbar",
     'rest_framework',
     'djoser',
@@ -98,8 +99,20 @@ SIMPLE_JWT = {
 DJOSER = {
     'SERIALIZERS': {
         'user_create':'user.serializer.UserCreateSerializer',
-        'current_user':'user.serializer.UserSerializer'
+        'current_user':'user.serializer.UserSerializer',
+        'user':'user.serializer.UserSerializer',
     },
+}
+
+SWAGGER_SETTINGS = {
+   'SECURITY_DEFINITIONS': {
+      'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header',
+            'description':'Enter your JWT token in the fornat: `JWT <your_token>`'
+      }
+   }
 }
 
 
