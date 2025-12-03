@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from village.models import Complain
+from village.models import Complain, ComplainResponse
 
 class ComplainSerializer(serializers.ModelSerializer):
 
@@ -13,4 +13,17 @@ class ComplainSerializer(serializers.ModelSerializer):
         model = Complain
         fields = ['id', 'first_name', 'address', 'phone_number',
                    'tag', 'title', 'description', 'image', 'status']
+        
+class UpdateStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Complain
+        fields = ['status']
+
+class ComplainResponseSerializer(serializers.ModelSerializer):
+    responder_name = serializers.CharField(source='responder.first_name', read_only=True)
+    complain_title = serializers.CharField(source='complain.title', read_only=True)
+    class Meta:
+        model = ComplainResponse
+        fields = ['id', 'message', 'responder_name', 'complain_title']
+        read_only_fields = ['responder_name', 'complain_title']
         
