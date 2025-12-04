@@ -1,13 +1,14 @@
 from rest_framework.viewsets import ModelViewSet
 from api.pagination import DefaultPagination
-from village.models import Complain, ComplainResponse
-from village.serializers import ComplainSerializer, UpdateStatusSerializer, ComplainResponseSerializer
+from village.models import Complain, ComplainResponse, Event
+from village.serializers import ComplainSerializer, UpdateStatusSerializer, ComplainResponseSerializer, EventSerializer
 from api.permissions import IsAdminOrOwner
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import PermissionDenied
+from rest_framework import permissions
 
 class ComplainViewSet(ModelViewSet):
     queryset = Complain.objects.select_related('user').all()
@@ -44,12 +45,11 @@ class ComplainViewSet(ModelViewSet):
         return ComplainSerializer
     
 class ComplainResponseViewSet(ModelViewSet):
-    queryset = ComplainResponse.objects.all()
     serializer_class = ComplainResponseSerializer
 
     def get_queryset(self):
         complain_id = self.kwargs.get('complain_pk')
-        return ComplainResponse.objects.filter(complain_id=complain_id)
+        return ComplainResponse.objects.select_related('responder').prefetch_related('complain').filter(complain_id=complain_id)
 
     def perform_create(self, serializer):
         if not self.request.user.is_staff:
@@ -59,3 +59,39 @@ class ComplainResponseViewSet(ModelViewSet):
         serializer.save(complain=complain, responder=self.request.user)
 
 
+class EventViewSet(ModelViewSet):
+    queryset = Event.objects.all()
+    serializer_class = EventSerializer
+    pagination_class = DefaultPagination
+    filter_backends = [SearchFilter]
+    search_fields = ['title', 'category', 'description']
+
+    def get_permissions(self):
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
+            permission_classes = [permissions.IsAdminUser()]
+        else:
+            permission_classes = [permissions.IsAuthenticated()]
+        return permission_classes
+
+    def perform_create(self, serializer):
+        serializer.save(organizer=self.request.user)
+
+    @action(detail=True, methods=['post', 'get'])
+    def join(self, request, pk=None):
+        event = self.get_object()
+        user = request.user
+        if event.status != 'upcoming':
+            return Response({'error':"Cannot join completed event"}, status=400)
+        if user in event.participant.all():
+            return Response({"mesage":"Already join this event"})
+        event.participant.add(user)
+        return Response({'seccess':'Successfull joined this event'})
+
+    @action(detail=True, methods=['get','post'])
+    def leave(self, request, pk=None):
+        event = self.get_object()
+        user = request.user
+        if user in event.participant.all():
+            event.participant.remove(user)
+            return Response({'message': 'Left event'})
+        return Response({'message': 'You are not a participant'})

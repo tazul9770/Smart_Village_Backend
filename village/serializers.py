@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from village.models import Complain, ComplainResponse
+from village.models import Complain, ComplainResponse, Event
 
 class ComplainSerializer(serializers.ModelSerializer):
 
@@ -26,4 +26,13 @@ class ComplainResponseSerializer(serializers.ModelSerializer):
         model = ComplainResponse
         fields = ['id', 'message', 'responder_name', 'complain_title']
         read_only_fields = ['responder_name', 'complain_title']
+
+class EventSerializer(serializers.ModelSerializer):
+    participant = serializers.StringRelatedField(many=True, read_only=True)
+    organizer = serializers.StringRelatedField(read_only=True)
+    class Meta:
+        model = Event
+        fields = ['id', 'title', 'description', 'image',
+                   'location', 'category','organizer', 'participant']
+        
         
