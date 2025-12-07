@@ -1,3 +1,6 @@
 from django.contrib import admin
+from village.models import Event, Complain, ComplainResponse
 
-# Register your models here.
+admin.site.register(Event)
+admin.site.register(Complain)
+admin.site.register(ComplainResponse)

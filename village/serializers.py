@@ -1,6 +1,9 @@
 from rest_framework import serializers
 from village.models import Complain, ComplainResponse, Event
 
+class EmptySerializer(serializers.Serializer):
+    pass
+
 class ComplainSerializer(serializers.ModelSerializer):
 
     address = serializers.CharField(source='user.address', read_only=True)

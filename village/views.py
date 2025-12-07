@@ -1,7 +1,7 @@
 from rest_framework.viewsets import ModelViewSet
 from api.pagination import DefaultPagination
 from village.models import Complain, ComplainResponse, Event
-from village.serializers import ComplainSerializer, UpdateStatusSerializer, ComplainResponseSerializer, EventSerializer
+from village.serializers import ComplainSerializer, UpdateStatusSerializer, ComplainResponseSerializer, EventSerializer, EmptySerializer
 from api.permissions import IsAdminOrOwner
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -9,6 +9,10 @@ from rest_framework.filters import SearchFilter
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import PermissionDenied
 from rest_framework import permissions
+from django.contrib.auth import get_user_model
+from django.core.mail import send_mail
+
+User = get_user_model()
 
 class ComplainViewSet(ModelViewSet):
     queryset = Complain.objects.select_related('user').all()
@@ -60,11 +64,17 @@ class ComplainResponseViewSet(ModelViewSet):
 
 
 class EventViewSet(ModelViewSet):
-    queryset = Event.objects.all()
-    serializer_class = EventSerializer
+    queryset = Event.objects.prefetch_related('participant').select_related('organizer').all()
     pagination_class = DefaultPagination
     filter_backends = [SearchFilter]
     search_fields = ['title', 'category', 'description']
+
+    def get_serializer_class(self):
+        if self.action == 'join':
+            return EmptySerializer
+        if self.action == 'leave':
+            return EmptySerializer
+        return EventSerializer
 
     def get_permissions(self):
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
@@ -74,7 +84,17 @@ class EventViewSet(ModelViewSet):
         return permission_classes
 
     def perform_create(self, serializer):
-        serializer.save(organizer=self.request.user)
+        event = serializer.save(organizer=self.request.user)
+        user_emails = User.objects.all()
+        msg = f"Hello, a new event has been created. Title: {event.title} | Location: {event.location} | Category: {event.category}. Please login to join. Thank you."
+        send_mail(
+            subject=f"New Event created: {event.title}",
+            message=msg,
+            from_email='tazulislam42609770@gmail.com',
+            recipient_list=[user.email for user in user_emails],
+            fail_silently=True,
+        )
+
 
     @action(detail=True, methods=['post', 'get'])
     def join(self, request, pk=None):
