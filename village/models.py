@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from cloudinary.models import CloudinaryField
     
 class Complain(models.Model):
     TAG_CHOICES = [
@@ -26,7 +27,7 @@ class Complain(models.Model):
     tag = models.CharField(max_length=50, choices=TAG_CHOICES)
     title = models.CharField(max_length=250)
     description = models.TextField()
-    image = models.ImageField(upload_to='complain_image/', blank=True, null=True)
+    image = CloudinaryField('image')
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
     submitted_at = models.DateTimeField(auto_now_add=True)
 
@@ -59,7 +60,7 @@ class Event(models.Model):
 
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True, null=True)
-    image = models.ImageField(upload_to='event_image/', blank=True, null=True)
+    image = CloudinaryField('image')
     location = models.CharField(max_length=200)
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
     participant = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='events')

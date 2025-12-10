@@ -47,7 +47,7 @@
 
 ### Backend Setup
 ```bash
-git clone https://github.com/yourusername/smart-village.git
+git clone https://github.com/tazul9770/smart-village.git
 cd smart-village/backend
 python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate

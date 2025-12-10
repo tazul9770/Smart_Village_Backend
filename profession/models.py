@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from cloudinary.models import CloudinaryField
 
 class ProfessionUser(models.Model):
     PROFESSION_CHOICES = [
@@ -29,7 +30,7 @@ class ProfessionUser(models.Model):
 
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profession_profile')
     age = models.IntegerField()
-    image = models.ImageField(upload_to='profession_image/', blank=True, null=True)
+    image = CloudinaryField('image')
     description = models.TextField()
     profession = models.CharField(max_length=50, choices=PROFESSION_CHOICES)
 

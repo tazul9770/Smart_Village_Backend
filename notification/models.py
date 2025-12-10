@@ -1,10 +1,11 @@
 from django.db import models
+from cloudinary.models import CloudinaryField
 
 class Village(models.Model):
     name = models.CharField(max_length=250)
     description = models.TextField(blank=True)
     post_code = models.CharField(max_length=20, default='0000')
-    image = models.ImageField(upload_to='village_image/', blank=True, null=True)
+    image = CloudinaryField('image')
     established_year = models.IntegerField(blank=True, null=True)
     head_of_village = models.CharField(max_length=100, blank=True, null=True)
 

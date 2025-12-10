@@ -1,11 +1,13 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from user.manager import CustomUserManager
+from cloudinary.models import CloudinaryField
 
 class User(AbstractUser):
     username = None
     email = models.EmailField(unique=True)
     address = models.TextField(blank=True, null=True)
+    image = CloudinaryField('image', blank=True, null=True) 
     phone_number = models.CharField(max_length=11, blank=True, null=True)
 
     USERNAME_FIELD = 'email'
