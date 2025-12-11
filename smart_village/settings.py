@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'drf_yasg',
     'django_filters',
+    'corsheaders',
     "debug_toolbar",
     'rest_framework',
     'djoser',
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     'django.middleware.security.SecurityMiddleware',
     "whitenoise.middleware.WhiteNoiseMiddleware",
@@ -79,6 +81,11 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'smart_village.wsgi.app'
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:5173',
+    'https://smart-village-backend.vercel.app'
+]
 
 
 # Database
