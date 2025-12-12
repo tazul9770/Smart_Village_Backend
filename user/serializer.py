@@ -2,10 +2,9 @@ from djoser.serializers import UserSerializer as BaseUser, UserCreateSerializer 
 from rest_framework import serializers
 
 class UserCreateSerializer(Base):
-    image = serializers.ImageField()
     class Meta(Base.Meta):
         fields = ['id', 'email', 'password', 'first_name',
-                  'last_name', 'address', 'phone_number', 'image']
+                  'last_name', 'address', 'phone_number']
         
 class UserSerializer(BaseUser):
     class Meta(BaseUser.Meta):
