@@ -2,7 +2,7 @@ from rest_framework import serializers
 from profession.models import ProfessionUser
 
 class ProfessionUserSerializer(serializers.ModelSerializer):
-    image = serializers.ImageField()
+    image = serializers.ImageField(required=False, allow_null=True)
     
     address = serializers.CharField(source='user.address', read_only=True)
     first_name = serializers.CharField(source='user.first_name', read_only=True)

@@ -30,7 +30,7 @@ class ProfessionUser(models.Model):
 
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='profession_profile')
     age = models.IntegerField()
-    image = CloudinaryField('image')
+    image = CloudinaryField('professionUser_image')
     description = models.TextField()
     profession = models.CharField(max_length=50, choices=PROFESSION_CHOICES)
 

@@ -2,7 +2,7 @@ from rest_framework import serializers
 from notification.models import Notification, Village
 
 class VillageSerializer(serializers.ModelSerializer):
-    image = serializers.ImageField()
+    image = serializers.ImageField(required=False, allow_null=True)
     class Meta:
         model = Village
         fields = [

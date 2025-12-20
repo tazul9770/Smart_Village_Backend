@@ -27,7 +27,7 @@ class Complain(models.Model):
     tag = models.CharField(max_length=50, choices=TAG_CHOICES)
     title = models.CharField(max_length=250)
     description = models.TextField()
-    image = CloudinaryField('image')
+    image = CloudinaryField('complain_image', blank=True, null=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
     submitted_at = models.DateTimeField(auto_now_add=True)
 
@@ -60,7 +60,7 @@ class Event(models.Model):
 
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True, null=True)
-    image = CloudinaryField('image')
+    image = CloudinaryField('event_image')
     location = models.CharField(max_length=200)
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
     participant = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='events')
