@@ -1,5 +1,5 @@
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.permissions import IsAdminUser, IsAuthenticated
+from rest_framework.permissions import IsAdminUser, AllowAny, IsAuthenticated
 from notification.models import Notification, Village
 from notification.serializers import NotificationSerializer, VillageSerializer
 
@@ -10,7 +10,7 @@ class VillageViewSet(ModelViewSet):
     def get_permissions(self):
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
             return [IsAdminUser()]
-        return [IsAuthenticated()]
+        return [AllowAny()]
 
 
 class NotificationViewSet(ModelViewSet):
