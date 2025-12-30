@@ -19,7 +19,7 @@ class NotificationViewSet(ModelViewSet):
     def get_permissions(self):
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
             return [IsAdminUser()]
-        return [IsAuthenticated()]
+        return [AllowAny()]
 
     def get_queryset(self):
         return Notification.objects.filter(active=True).order_by('-created_at')
