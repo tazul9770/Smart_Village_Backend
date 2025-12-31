@@ -84,7 +84,7 @@ WSGI_APPLICATION = 'smart_village.wsgi.app'
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:5173',
-    'https://smart-village-backend.vercel.app'
+    'https://smart-village-frontend.vercel.app/'
 ]
 
 
