@@ -1,6 +1,41 @@
-from django.shortcuts import render
-from django.http import HttpResponse
-from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from user.models import Contact
+from rest_framework.viewsets import ModelViewSet
+from user.serializer import ContactSerializer
+from rest_framework import status
+from django.core.mail import send_mail
+from django.conf import settings
+
+class ContactViewSet(ModelViewSet):
+    queryset = Contact.objects.all()
+    serializer_class = ContactSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = ContactSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+
+            # Send welcome email to the user
+            user_email = serializer.data['email']
+            user_msg = serializer.data['comment']
+
+            send_mail(
+                subject='Welcome to smart village!',
+                message='Thank you for reaching out! We will get back to you shortly.',
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[user_email],
+                fail_silently=False,
+            )
+
+            send_mail(
+                subject="Smart village",
+                message=f"{user_email} send you message\n\n{user_msg}",
+                from_email=user_email,
+                recipient_list=[settings.EMAIL_HOST_USER],
+                fail_silently=False,
+            )
+
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

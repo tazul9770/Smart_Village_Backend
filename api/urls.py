@@ -3,6 +3,7 @@ from rest_framework_nested import routers
 from profession.views import ProfessionUserViewset
 from village.views import ComplainViewSet, ComplainResponseViewSet, EventViewSet
 from notification.views import NotificationViewSet, VillageViewSet
+from user.views import ContactViewSet
 
 router = routers.DefaultRouter()
 
@@ -11,6 +12,7 @@ router.register('complains', ComplainViewSet, basename='complains')
 router.register('events', EventViewSet, basename='events')
 router.register('notification', NotificationViewSet, basename='notification')
 router.register('village', VillageViewSet, basename='village')
+router.register('contact', ContactViewSet, basename='contact')
 
 complain_router = routers.NestedDefaultRouter(router, 'complains', lookup='complain')
 complain_router.register('response', ComplainResponseViewSet, basename='complain-response')

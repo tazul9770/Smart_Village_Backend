@@ -15,3 +15,9 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.email
+
+class Contact(models.Model):
+    email = models.EmailField()
+    phone_number = models.CharField(max_length=11)
+    comment = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
