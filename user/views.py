@@ -5,10 +5,17 @@ from user.serializer import ContactSerializer
 from rest_framework import status
 from django.core.mail import send_mail
 from django.conf import settings
+from rest_framework.permissions import IsAdminUser, AllowAny
 
 class ContactViewSet(ModelViewSet):
     queryset = Contact.objects.all()
     serializer_class = ContactSerializer
+
+    def get_permissions(self):
+        if self.action in ['update', 'partial_update', 'destroy']: 
+            return [IsAdminUser()]
+        return [AllowAny()]
+
 
     def create(self, request, *args, **kwargs):
         serializer = ContactSerializer(data=request.data)
