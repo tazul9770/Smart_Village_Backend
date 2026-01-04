@@ -70,16 +70,18 @@ class EventViewSet(ModelViewSet):
     search_fields = ['title', 'category', 'description']
 
     def get_serializer_class(self):
-        if self.action in ['join', 'leave']:
+        if self.action == 'join':
+            return EmptySerializer
+        if self.action == 'leave':
             return EmptySerializer
         return EventSerializer
 
     def get_permissions(self):
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
-            permission_classes = [permissions.IsAdminUser]
+            permission_classes = [permissions.IsAdminUser()]
         else:
-            permission_classes = [permissions.AllowAny]
-        return [permission() for permission in permission_classes]
+            permission_classes = [permissions.AllowAny()]
+        return permission_classes
 
     def perform_create(self, serializer):
         event = serializer.save(organizer=self.request.user)
@@ -92,13 +94,13 @@ class EventViewSet(ModelViewSet):
         event = self.get_object()
         user = request.user
         if event.status != 'upcoming':
-            return Response({'error': "Cannot join completed event"}, status=400)
+            return Response({'error':"Cannot join completed event"}, status=400)
         if user in event.participant.all():
-            return Response({"message": "Already joined this event"})
+            return Response({"mesage":"Already join this event"})
         event.participant.add(user)
-        return Response({'success': 'Successfully joined this event'})
+        return Response({'seccess':'Successfull joined this event'})
 
-    @action(detail=True, methods=['get', 'post'])
+    @action(detail=True, methods=['get','post'])
     def leave(self, request, pk=None):
         event = self.get_object()
         user = request.user
@@ -106,4 +108,3 @@ class EventViewSet(ModelViewSet):
             event.participant.remove(user)
             return Response({'message': 'Successfully left event'})
         return Response({'message': 'You are not a participant'})
-
