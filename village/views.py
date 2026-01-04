@@ -10,7 +10,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import PermissionDenied
 from rest_framework import permissions
 from django.contrib.auth import get_user_model
-from django.core.mail import send_mail
+from notification.models import Notification
 
 User = get_user_model()
 
@@ -70,44 +70,35 @@ class EventViewSet(ModelViewSet):
     search_fields = ['title', 'category', 'description']
 
     def get_serializer_class(self):
-        if self.action == 'join':
-            return EmptySerializer
-        if self.action == 'leave':
+        if self.action in ['join', 'leave']:
             return EmptySerializer
         return EventSerializer
 
     def get_permissions(self):
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
-            permission_classes = [permissions.IsAdminUser()]
+            permission_classes = [permissions.IsAdminUser]
         else:
-            permission_classes = [permissions.AllowAny()]
-        return permission_classes
+            permission_classes = [permissions.AllowAny]
+        return [permission() for permission in permission_classes]
 
     def perform_create(self, serializer):
         event = serializer.save(organizer=self.request.user)
-        user_emails = User.objects.all()
-        msg = f"Hello, a new event has been created. Title: {event.title} | Location: {event.location} | Category: {event.category}. Please login to join. Thank you."
-        send_mail(
-            subject=f"New Event created: {event.title}",
-            message=msg,
-            from_email='tazulislam42609770@gmail.com',
-            recipient_list=[user.email for user in user_emails],
-            fail_silently=True,
+        Notification.objects.create(
+            message=f"New event created: {event.title} | Location: {event.location} | Category: {event.category}"
         )
-
 
     @action(detail=True, methods=['post', 'get'])
     def join(self, request, pk=None):
         event = self.get_object()
         user = request.user
         if event.status != 'upcoming':
-            return Response({'error':"Cannot join completed event"}, status=400)
+            return Response({'error': "Cannot join completed event"}, status=400)
         if user in event.participant.all():
-            return Response({"mesage":"Already join this event"})
+            return Response({"message": "Already joined this event"})
         event.participant.add(user)
-        return Response({'seccess':'Successfull joined this event'})
+        return Response({'success': 'Successfully joined this event'})
 
-    @action(detail=True, methods=['get','post'])
+    @action(detail=True, methods=['get', 'post'])
     def leave(self, request, pk=None):
         event = self.get_object()
         user = request.user
@@ -115,3 +106,4 @@ class EventViewSet(ModelViewSet):
             event.participant.remove(user)
             return Response({'message': 'Successfully left event'})
         return Response({'message': 'You are not a participant'})
+
