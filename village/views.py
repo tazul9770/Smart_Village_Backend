@@ -80,7 +80,7 @@ class EventViewSet(ModelViewSet):
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
             permission_classes = [permissions.IsAdminUser()]
         else:
-            permission_classes = [permissions.IsAuthenticated()]
+            permission_classes = [permissions.AllowAny()]
         return permission_classes
 
     def perform_create(self, serializer):
@@ -113,5 +113,5 @@ class EventViewSet(ModelViewSet):
         user = request.user
         if user in event.participant.all():
             event.participant.remove(user)
-            return Response({'message': 'Left event'})
+            return Response({'message': 'Successfully left event'})
         return Response({'message': 'You are not a participant'})
