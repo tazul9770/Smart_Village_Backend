@@ -33,11 +33,11 @@ class ComplainResponseSerializer(serializers.ModelSerializer):
 
 class EventSerializer(serializers.ModelSerializer):
     image = serializers.ImageField(required=False, allow_null=True)
-    participant = serializers.StringRelatedField(many=True, read_only=True)
-    organizer = serializers.StringRelatedField(read_only=True)
+    participant_count = serializers.SerializerMethodField()
     class Meta:
         model = Event
         fields = ['id', 'title', 'description', 'image',
-                   'location', 'category','organizer', 'participant']
+                   'location', 'category', 'participant_count', 'created_at']
         
-        
+    def get_participant_count(self, obj):
+        return obj.participant.count()
