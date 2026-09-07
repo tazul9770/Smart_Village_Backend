@@ -66,7 +66,6 @@ class Event(models.Model):
     participant = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='events')
     date = models.DateField(null=True, blank=True)
     status = models.CharField(max_length=20, choices=[('upcoming','Upcoming'),('completed','Completed')], default='upcoming')
-    created_at = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return f"{self.title}"
 
