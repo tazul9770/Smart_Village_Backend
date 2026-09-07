@@ -33,6 +33,7 @@ class ProfessionUser(models.Model):
     image = CloudinaryField('professionUser_image')
     description = models.TextField()
     profession = models.CharField(max_length=50, choices=PROFESSION_CHOICES)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.user.username} ({self.get_profession_display()})"

@@ -64,7 +64,7 @@ class ComplainResponseViewSet(ModelViewSet):
 
 
 class EventViewSet(ModelViewSet):
-    queryset = Event.objects.prefetch_related('participant').select_related('organizer').all()
+    queryset = Event.objects.prefetch_related('participant').all()
     pagination_class = DefaultPagination
     filter_backends = [SearchFilter]
     search_fields = ['title', 'category', 'description']
