@@ -8,9 +8,10 @@ class UserCreateSerializer(Base):
                   'last_name', 'address', 'phone_number']
         
 class UserSerializer(BaseUser):
+    image = serializers.ImageField(required=False)
     class Meta(BaseUser.Meta):
         fields = ['id', 'email', 'first_name',
-                  'last_name', 'address', 'phone_number', 'is_staff']
+                  'last_name', 'address', 'phone_number', 'image', 'is_staff']
         read_only_fields=['is_staff']
 
 class ContactSerializer(serializers.ModelSerializer):
