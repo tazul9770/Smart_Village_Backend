@@ -34,7 +34,8 @@ class VillageSerializer(serializers.ModelSerializer):
 class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
-        fields = ['id', 'message', 'created_at']
+        fields = ['id', 'message', 'active', 'created_at']
+        read_only_fields=['active']
 
 
 
