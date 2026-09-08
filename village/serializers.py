@@ -16,7 +16,7 @@ class ComplainSerializer(serializers.ModelSerializer):
     class Meta:
         model = Complain
         fields = ['id', 'first_name', 'address', 'phone_number',
-                   'tag', 'title', 'description', 'image', 'status']
+                   'tag', 'title', 'description', 'image', 'status', 'submitted_at']
         
 class UpdateStatusSerializer(serializers.ModelSerializer):
     class Meta:
