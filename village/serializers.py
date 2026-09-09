@@ -38,6 +38,5 @@ class EventSerializer(serializers.ModelSerializer):
         model = Event
         fields = ['id', 'title', 'description', 'image',
                    'location', 'category', 'participant_count', 'created_at']
-        
     def get_participant_count(self, obj):
         return obj.participant.count()
