@@ -39,7 +39,7 @@ class EventSerializer(serializers.ModelSerializer):
         model = Event
         fields = ['id', 'title', 'description', 'image',
                    'location', 'category', 'participant_count', 'organizer', 'status', 'created_at']
-        read_only_fields = ['organizer', 'status']
+        read_only_fields = ['organizer']
 
     def get_participant_count(self, obj):
         return obj.participant.count()
