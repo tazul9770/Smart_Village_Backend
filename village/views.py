@@ -15,7 +15,7 @@ from notification.models import Notification
 User = get_user_model()
 
 class ComplainViewSet(ModelViewSet):
-    queryset = Complain.objects.select_related('user').all()
+    queryset = Complain.objects.select_related('user').all().order_by("-submitted_at")
     serializer_class = ComplainSerializer
     pagination_class = DefaultPagination
     filter_backends = [SearchFilter]
