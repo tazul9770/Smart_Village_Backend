@@ -11,6 +11,8 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework import permissions
 from django.contrib.auth import get_user_model
 from notification.models import Notification
+from django.core.mail import send_mail
+from django.conf import settings
 
 User = get_user_model()
 
@@ -22,8 +24,31 @@ class ComplainViewSet(ModelViewSet):
     search_fields = ['title', 'tag', 'status']
     permission_classes = [IsAdminOrOwner]
 
+    def get_serializer_class(self):
+        if self.action == 'change_status':
+            return UpdateStatusSerializer
+        return ComplainSerializer
+
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        complain = serializer.save(user=self.request.user)
+        send_mail(
+            subject='We received your complain',
+            message='Thank you for reaching out! We will get back to you shortly.',
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=[complain.user.email],
+            fail_silently=False,
+        )
+        send_mail(
+            subject='New complain submitted',
+            message=f"{complain.user.email} submitted a complain:\n\nTitle: {complain.title}\n\n{complain.description}",
+            from_email=complain.user.email,
+            recipient_list=[settings.EMAIL_HOST_USER],
+            fail_silently=False,
+        )
+
+        Notification.objects.create(
+            message=f"New complain submitted: \"{complain.title}\" by {complain.user.email}"
+        )
 
     @action(detail=False, methods=['get'], url_path='my')
     def my_complains(self, request):
@@ -42,11 +67,7 @@ class ComplainViewSet(ModelViewSet):
         complain.status = status_new
         complain.save()
         return Response({"detail": f"Status changed to {status_new}"})
-    
-    def get_serializer_class(self):
-        if self.action == 'change_status':
-            return UpdateStatusSerializer
-        return ComplainSerializer
+
     
 class ComplainResponseViewSet(ModelViewSet):
     serializer_class = ComplainResponseSerializer
@@ -60,8 +81,18 @@ class ComplainResponseViewSet(ModelViewSet):
             raise PermissionDenied("Only staff can create a response.")
         complain_id = self.kwargs.get('complain_pk')
         complain = get_object_or_404(Complain, pk=complain_id)
-        serializer.save(complain=complain, responder=self.request.user)
+        response = serializer.save(complain=complain, responder=self.request.user)
 
+        Notification.objects.create(
+            message=f"Your complain \"{complain.title}\" received a response from {self.request.user.get_username()}"
+        )
+        send_mail(
+            subject=f'You got a response on "{complain.title}"',
+            message=f"{self.request.user.get_username()} replied to your complain:\n\n{response.message}",
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=[complain.user.email],
+            fail_silently=False,
+        )
 
 class EventViewSet(ModelViewSet):
     queryset = Event.objects.prefetch_related('participant').select_related('organizer').all()
