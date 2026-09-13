@@ -4,7 +4,7 @@ from notification.models import Notification, Village
 from notification.serializers import NotificationSerializer, VillageSerializer
 
 class VillageViewSet(ModelViewSet):
-    queryset = Village.objects.all()
+    queryset = Village.objects.all().order_by('created_at')
     serializer_class = VillageSerializer
 
     def get_permissions(self):

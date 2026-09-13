@@ -8,7 +8,7 @@ from django.conf import settings
 from rest_framework.permissions import IsAdminUser, AllowAny
 
 class ContactViewSet(ModelViewSet):
-    queryset = Contact.objects.all()
+    queryset = Contact.objects.all().order_by('created_at')
     serializer_class = ContactSerializer
 
     def get_permissions(self):

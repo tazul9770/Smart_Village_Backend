@@ -38,7 +38,6 @@ INSTALLED_APPS = [
     'djoser',
     'api',
     'user',
-    'profession',
     'village',
     'notification'
 ]

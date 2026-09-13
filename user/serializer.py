@@ -5,13 +5,13 @@ from user.models import Contact
 class UserCreateSerializer(Base):
     class Meta(Base.Meta):
         fields = ['id', 'email', 'password', 'first_name',
-                  'last_name', 'address', 'phone_number']
+                  'last_name', 'address', 'phone_number', 'designation']
         
 class UserSerializer(BaseUser):
     image = serializers.ImageField(required=False)
     class Meta(BaseUser.Meta):
         fields = ['id', 'email', 'first_name',
-                  'last_name', 'address', 'phone_number', 'image', 'is_staff']
+                  'last_name', 'address', 'phone_number', 'image', 'designation','bio', 'is_staff']
         read_only_fields=['is_staff']
 
 class ContactSerializer(serializers.ModelSerializer):

@@ -1,13 +1,11 @@
 from django.urls import path, include
 from rest_framework_nested import routers
-from profession.views import ProfessionUserViewset
 from village.views import ComplainViewSet, ComplainResponseViewSet, EventViewSet
 from notification.views import NotificationViewSet, VillageViewSet
 from user.views import ContactViewSet
 
 router = routers.DefaultRouter()
 
-router.register('profession_user', ProfessionUserViewset, basename='profession_user')
 router.register('complains', ComplainViewSet, basename='complains')
 router.register('events', EventViewSet, basename='events')
 router.register('notification', NotificationViewSet, basename='notification')
