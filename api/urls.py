@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework_nested import routers
 from village.views import ComplainViewSet, ComplainResponseViewSet, EventViewSet
 from notification.views import NotificationViewSet, VillageViewSet
-from user.views import ContactViewSet
+from user.views import ContactViewSet, DesignationDistributionView
 
 router = routers.DefaultRouter()
 
@@ -19,5 +19,10 @@ urlpatterns = [
     path('', include(router.urls)),
     path('', include(complain_router.urls)),
     path("auth/", include('djoser.urls')),
-    path("auth/", include('djoser.urls.jwt'))
+    path("auth/", include('djoser.urls.jwt')),
+    path(
+        "auth/designation-distribution/",
+        DesignationDistributionView.as_view(),
+        name="designation-distribution"
+    ),
 ]

@@ -6,6 +6,13 @@ from rest_framework import status
 from django.core.mail import send_mail
 from django.conf import settings
 from rest_framework.permissions import IsAdminUser, AllowAny
+from django.contrib.auth import get_user_model
+from django.db.models import Count
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+
+User = get_user_model()
 
 class ContactViewSet(ModelViewSet):
     queryset = Contact.objects.all().order_by('created_at')
@@ -44,5 +51,19 @@ class ContactViewSet(ModelViewSet):
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class DesignationDistributionView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        data = (
+            User.objects
+            .values("designation")
+            .annotate(count=Count("id"))
+            .order_by("-count")
+        )
+
+        return Response(data)
 
 
