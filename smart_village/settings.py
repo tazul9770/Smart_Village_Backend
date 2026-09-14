@@ -210,7 +210,5 @@ EMAIL_PORT = config('EMAIL_PORT')
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 
-# BACKEND_URL = config("BACKEND_URL")
-# FRONTEND_URL = config("FRONTEND_URL")
-# FRONTEND_URL=https://smart-village-frontend.vercel.app
-# BACKEND_URL=http://127.0.0.1:8000
+BACKEND_URL = config("BACKEND_URL")
+FRONTEND_URL = config("FRONTEND_URL")
